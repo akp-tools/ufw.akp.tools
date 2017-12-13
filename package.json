@@ -5,6 +5,15 @@
   "license": "MIT",
   "private": true,
   "dependencies": {},
+  "scripts": {
+    "deploy": "firebase deploy",
+    "deploy:functions": "firebase deploy --only functions",
+    "deploy:web": "firebase deploy --only hosting",
+    "deploy:db": "firebase deploy --only database,firestore",
+    "deploy:db:firestore": "firebase deploy --only firestore",
+    "deploy:db:realtime": "firebase deploy --only database",
+    "deploy:storage": "firebase deploy --only storage"
+  },
   "devDependencies": {
     "eslint": "^4.13.1",
     "eslint-config-airbnb": "^16.1.0",
