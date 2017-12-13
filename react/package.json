@@ -1,6 +1,4 @@
 {
-  "name": "ufw.akp.tools",
-  "version": "0.1.0",
   "homepage": "https://ufw.akp.tools/",
   "private": true,
   "dependencies": {
