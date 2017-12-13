@@ -1,6 +1,6 @@
 {
   "name": "ufw.akp.tools",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "author": "Austin Peterson <austin@akpwebdesign.com> (https://blog.akpwebdesign.com/)",
   "license": "MIT",
   "private": true,
