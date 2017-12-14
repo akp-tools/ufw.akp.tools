@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Build from 'react-icons/lib/md/build';
+import Autorenew from 'react-icons/lib/md/autorenew';
 import './Loader.css';
 
 const Loader = ({ visible }) => (
   <div className={`Loader ${visible ? 'visible' : ''}`}>
     <div className="Logo">
-      <img src="https://via.placeholder.com/250x250" alt="akp.tools logo" /><br />
-      <img src="https://via.placeholder.com/100x100" alt="loading indicator" />
+      <Build className="wrench-icon" /><br />
+      <Autorenew className="rotate load-icon" />
     </div>
   </div>
 );

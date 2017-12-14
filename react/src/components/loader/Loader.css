@@ -19,3 +19,25 @@
     opacity: 1;
     visibility: visible;
 }
+
+.wrench-icon {
+    height: 256px;
+    width: 256px;
+    color: #fff;
+}
+
+.load-icon {
+    height: 128px;
+    width: 128px;
+    color: #fff;
+}
+
+.rotate {
+    animation: rotate infinite 1.5s linear;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
