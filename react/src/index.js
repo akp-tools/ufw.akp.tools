@@ -7,7 +7,6 @@ import { createLogger } from 'redux-logger';
 import Loader from './containers/loader';
 import Map from './containers/map';
 import reducer from './reducers';
-import { LoaderActions } from './actions';
 import './index.css';
 
 
