@@ -1,17 +1,32 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { createStore, compose } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { createLogger } from 'redux-logger';
 import Loader from './containers/loader';
 import Map from './components/map';
 import reducer from './reducers';
 import { LoaderActions } from './actions';
 import './index.css';
 
-const enhancers =
-  compose(window.devToolsExtension ? window.devToolsExtension() : f => f);
 
-const store = createStore(reducer, enhancers);
+const loggerMiddleware = createLogger();
+const enhancers =
+  compose(
+    applyMiddleware(
+      loggerMiddleware,
+    ),
+    window.devToolsExtension ? window.devToolsExtension() : f => f,
+  );
+
+const store = createStore(
+  reducer,
+  enhancers,
+);
+
+if (window.devToolsExtension) {
+  window.devToolsExtension.updateStore(store);
+}
 
 render(
   <Provider store={store}>
