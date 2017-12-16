@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import Loader from './containers/loader';
-import Map from './components/map';
+import Map from './containers/map';
 import reducer from './reducers';
 import { LoaderActions } from './actions';
 import './index.css';
@@ -39,10 +39,6 @@ render(
   </Provider>,
   document.getElementById('root'),
 );
-
-setTimeout(() => {
-  store.dispatch(LoaderActions.hide());
-}, 500);
 
 // not yet.
 // import registerServiceWorker from './registerServiceWorker';

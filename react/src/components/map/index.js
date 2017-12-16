@@ -50,8 +50,8 @@ class Map extends Component {
       <ReactMapGL
         {...viewport}
         onViewportChange={v => this.setState({ viewport: v })}
+        onLoad={v => this.props.onLoad()}
         mapStyle="mapbox://styles/mapbox/dark-v9"
-        preventStyleDiffing={false}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />
     );
@@ -61,6 +61,7 @@ class Map extends Component {
 Map.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
+  onLoad: PropTypes.func.isRequired,
 };
 
 export default Map;
