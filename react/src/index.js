@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import Loader from './containers/loader';
 import Map from './components/map';
@@ -14,6 +15,7 @@ const loggerMiddleware = createLogger();
 const enhancers =
   compose(
     applyMiddleware(
+      thunkMiddleware,
       loggerMiddleware,
     ),
     window.devToolsExtension ? window.devToolsExtension() : f => f,
