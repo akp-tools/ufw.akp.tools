@@ -4,17 +4,24 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
+import Raven from 'raven-js';
+import createRavenMiddleware from 'raven-for-redux';
 import Loader from './containers/loader';
 import Map from './containers/map';
 import reducer from './reducers';
 import './index.css';
 
+const SENTRY_TOKEN = process.env.SentryLoggingToken;
+Raven.config(SENTRY_TOKEN).install();
 
 const loggerMiddleware = createLogger();
+const ravenMiddleware = createRavenMiddleware(Raven);
+
 const enhancers =
   compose(
     applyMiddleware(
       thunkMiddleware,
+      ravenMiddleware,
       loggerMiddleware,
     ),
     window.devToolsExtension ? window.devToolsExtension() : f => f,
