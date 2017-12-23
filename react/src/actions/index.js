@@ -34,3 +34,6 @@ export const MapActions = {
     }
   ),
 };
+
+// Firebase types and action creators
+export * from './firebase';

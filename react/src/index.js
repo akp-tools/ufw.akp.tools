@@ -9,6 +9,7 @@ import createRavenMiddleware from 'raven-for-redux';
 import Loader from './containers/loader';
 import Map from './containers/map';
 import reducer from './reducers';
+import * as Actions from './actions';
 import './index.css';
 
 const SENTRY_TOKEN = process.env.SentryLoggingToken;
@@ -49,3 +50,5 @@ render(
 // not yet.
 // import registerServiceWorker from './registerServiceWorker';
 // registerServiceWorker();
+
+store.dispatch(Actions.FirebaseActions.init());

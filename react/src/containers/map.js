@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import MapComponent from '../components/map';
 import { MapActions } from '../actions';
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({ locations: state.firebase.blocks });
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     onLoad: MapActions.loaded,

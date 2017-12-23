@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactMapGL from 'react-map-gl';
+import DeckGLOverlay from './DeckGLOverlay';
 import './map.css';
 
 const MAPBOX_TOKEN = process.env.MapboxAccessToken;
@@ -12,9 +13,9 @@ class Map extends Component {
     const height = window.innerHeight;
     this.state = {
       viewport: {
-        latitude: 37.7749,
-        longitude: -122.4194,
-        zoom: 12,
+        latitude: 25,
+        longitude: 0,
+        zoom: 1.45,
         pitch: 0,
         bearing: 0,
         width,
@@ -53,7 +54,13 @@ class Map extends Component {
         onLoad={v => this.props.onLoad()}
         mapStyle="mapbox://styles/mapbox/dark-v9"
         mapboxApiAccessToken={MAPBOX_TOKEN}
-      />
+      >
+        <DeckGLOverlay
+          viewport={viewport}
+          data={this.props.locations}
+          cellSize={20}
+        />
+      </ReactMapGL>
     );
   }
 }
@@ -62,6 +69,7 @@ Map.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   onLoad: PropTypes.func.isRequired,
+  locations: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Map;
