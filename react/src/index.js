@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { applyMiddleware, compose, createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
@@ -15,18 +16,21 @@ import './index.css';
 const SENTRY_TOKEN = process.env.SentryLoggingToken;
 Raven.config(SENTRY_TOKEN).install();
 
-const loggerMiddleware = createLogger();
 const ravenMiddleware = createRavenMiddleware(Raven);
+const middlewares = [thunkMiddleware, ravenMiddleware];
+
+if (process.env.NODE_ENV === 'development') {
+  const loggerMiddleware = createLogger();
+  middlewares.push(loggerMiddleware);
+}
+
+const composeEnhancers = composeWithDevTools({
+  actionCreators: Actions,
+  maxAge: 10,
+});
 
 const enhancers =
-  compose(
-    applyMiddleware(
-      thunkMiddleware,
-      ravenMiddleware,
-      loggerMiddleware,
-    ),
-    window.devToolsExtension ? window.devToolsExtension() : f => f,
-  );
+  composeEnhancers(applyMiddleware(...middlewares));
 
 const store = createStore(
   reducer,
