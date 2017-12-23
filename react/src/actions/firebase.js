@@ -22,7 +22,7 @@ export const FirebaseActions = {
       dispatch({ type: FirebaseTypes.FIREBASE_INITIALIZE });
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
-      db.collection('ufwBlocks').orderBy('time', 'desc').limit(9001)
+      db.collection('ufwBlocks').orderBy('time', 'desc').limit(250)
         .onSnapshot((querySnapshot) => {
           const blocks = [];
           querySnapshot.forEach(doc => blocks.push(doc.data()));
