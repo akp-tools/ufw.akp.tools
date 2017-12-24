@@ -30,15 +30,16 @@ DeckGLOverlay.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const getSourceColor = (d) => {
+const getSourceColor = (d, t) => {
   const str = `${d.country}`;
 
   const hash = crypto.createHash('md5').update(str).digest('hex').slice(0, 6);
   const red = parseInt(hash.slice(0, 2), 16);
   const green = parseInt(hash.slice(2, 4), 16);
   const blue = parseInt(hash.slice(4, 6), 16);
+  const alpha = t ? 0 : 255;
 
-  return [red, green, blue, 255];
+  return [red, green, blue, alpha];
 };
 
-const getTargetColor = d => getSourceColor(d);
+const getTargetColor = d => getSourceColor(d, true);
