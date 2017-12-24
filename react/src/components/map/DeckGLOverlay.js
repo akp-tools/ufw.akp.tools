@@ -15,10 +15,11 @@ export default class DeckGLOverlay extends Component {
     const layer = new ArcLayer({
       id: 'grid',
       data,
-      getSourceColor: d => getSourceColor(d, false, data.length),
-      getTargetColor: d => getSourceColor(d, true, data.length),
+      getSourceColor: d => getSourceColor(d, false),
+      getTargetColor: d => getSourceColor(d, true),
       getSourcePosition: d => (d.geo ? [d.geo.longitude, d.geo.latitude] : [0, 0]),
       getTargetPosition: d => [-81.5427402, 35.922479],
+      strokeWidth: 4,
     });
 
     return <DeckGL {...viewport} layers={[layer]} />;
@@ -30,7 +31,7 @@ DeckGLOverlay.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const getSourceColor = (d, t, dataLength) => {
+const getSourceColor = (d, t) => {
   let str = `${d.country}`;
   if (str === 'United States') {
     str = `${d.subcountry}, ${str}`;
@@ -40,7 +41,7 @@ const getSourceColor = (d, t, dataLength) => {
   const red = parseInt(hash.slice(0, 2), 16);
   const green = parseInt(hash.slice(2, 4), 16);
   const blue = parseInt(hash.slice(4, 6), 16);
-  const alpha = t ? dataLength / 1000 * 255 : 255;
+  const alpha = 255;
 
 
   return [red, green, blue, alpha];

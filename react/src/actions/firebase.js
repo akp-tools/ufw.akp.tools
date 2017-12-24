@@ -22,7 +22,7 @@ export const FirebaseActions = {
       dispatch({ type: FirebaseTypes.FIREBASE_INITIALIZE });
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
-      db.collection('ufwBlocks').orderBy('time', 'desc').limit(1000)
+      db.collection('geopoints')
         .onSnapshot((querySnapshot) => {
           const blocks = [];
           querySnapshot.forEach(doc => blocks.push(doc.data()));
