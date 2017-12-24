@@ -4,3 +4,9 @@
   height: 100%;
   width: 100%;
 }
+
+/* Hide the map control container for now, as it doesn't display properly with defaults. */
+.mapboxgl-control-container {
+  display: none;
+  visibility: hidden;
+}
