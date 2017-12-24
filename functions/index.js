@@ -9,10 +9,9 @@ admin.initializeApp(functions.config().firebase);
 const rootRef = admin.database().ref();
 const firestore = admin.firestore();
 
-exports.ufwBlockEvents = functions.https.onRequest((req, res) => {
+exports.rawUfwLine = functions.https.onRequest((req, res) => {
   const { secret } = req.query;
-  const { events } = JSON.parse(req.body.payload);
-  const savedSearch = JSON.parse(req.body.payload).saved_search;
+  const line = req.body;
 
   return rootRef.child('config').once('value').then((data) => {
     const config = data.val();
@@ -20,27 +19,20 @@ exports.ufwBlockEvents = functions.https.onRequest((req, res) => {
       return res.status(404);
     }
 
-    if (savedSearch.name !== 'UFW Blocks') {
-      return res.status(404);
-    }
+    const firestoreEvent = {
+      time: Date.now(),
+      rawLog: line,
+    };
+    const strToParse = line;
+    const segments = strToParse.split(' ');
+    return Promise.map(segments, (segment) => {
+      const parsed = helpers.parseUfwSegment(segment);
+      if (!parsed) { return; }
 
-    return Promise.map(events, (event) => {
-      const firestoreEvent = {
-        time: event.received_at,
-        hostname: event.hostname,
-        rawLog: event.message,
-      };
-      const strToParse = event.message;
-      const segments = strToParse.split(' ');
-      return Promise.map(segments, (segment) => {
-        const parsed = helpers.parseUfwSegment(segment);
-        if (!parsed) { return; }
-
-        const [field, value] = parsed;
-        firestoreEvent[field] = value;
-      }).then(() => firestore.doc(`/ufwBlocks/${event.id}`).set(firestoreEvent));
-    });
-  }).then(() => res.send('ok'));
+      const [field, value] = parsed;
+      firestoreEvent[field] = value;
+    }).then(() => firestore.doc(`/ufwBlocks/${firestoreEvent.time}`).set(firestoreEvent));
+  }).then(() => res.send('ok\n'));
 });
 
 exports.onNewUfwBlock = functions.firestore.document('/ufwBlocks/{id}').onCreate((event) => {
