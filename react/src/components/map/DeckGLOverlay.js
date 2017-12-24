@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import DeckGL, { ArcLayer } from 'deck.gl';
 
+const c = require('tinycolor2');
+
 const crypto = require('crypto');
 
 export default class DeckGLOverlay extends Component {
@@ -38,11 +40,13 @@ const getSourceColor = (d, t) => {
   }
 
   const hash = crypto.createHash('md5').update(str).digest('hex').slice(0, 6);
-  const red = parseInt(hash.slice(0, 2), 16);
-  const green = parseInt(hash.slice(2, 4), 16);
-  const blue = parseInt(hash.slice(4, 6), 16);
-  const alpha = 255;
+  let color = c(hash);
 
+  if (color.isDark()) {
+    color = color.brighten(30).saturate();
+  }
 
-  return [red, green, blue, alpha];
+  const { r, g, b } = color.toRgb();
+
+  return [r, g, b, 255];
 };
