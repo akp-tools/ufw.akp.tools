@@ -52,7 +52,7 @@ class Map extends Component {
         {...viewport}
         onViewportChange={v => this.setState({ viewport: v })}
         onLoad={v => this.props.onLoad()}
-        mapStyle="mapbox://styles/mapbox/dark-v9"
+        mapStyle="mapbox://styles/akp-/cjbmluqa22yqq2qqjn3vd5ccw"
         mapboxApiAccessToken={MAPBOX_TOKEN}
       >
         <DeckGLOverlay
