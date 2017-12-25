@@ -7,6 +7,7 @@ const helpers = require('./helpers');
 admin.initializeApp(functions.config().firebase);
 
 const rootRef = admin.database().ref();
+const dataRef = rootRef.child('data');
 const firestore = admin.firestore();
 
 exports.rawUfwLine = functions.https.onRequest((req, res) => {
@@ -81,51 +82,65 @@ exports.onNewUfwBlock = functions.firestore.document('/ufwBlocks/{id}').onCreate
         range,
       },
     };
-    return event.data.ref.set(blk, { merge: true }).then(() => firestore.collection('geopoints').add({ geo, country, subcountry }))
-      .then(() => {
-        const cityRef = firestore.collection('cities').doc(city);
-        const subcountryRef = firestore.collection('regions').doc(subcountry);
-        const countryRef = firestore.collection('countries').doc(country);
-        const geoRef = firestore.collection('geopoints').doc(`${geo.latitude}/${geo.longitude}`);
-        return firestore.runTransaction((t) => {
-          let cityCount = 0;
-          let subcountryCount = 0;
-          let countryCount = 0;
-          let geoCount = 0;
 
-          return t.get(cityRef)
-            .then((doc) => {
-              cityCount = doc.data() || cityCount;
-              cityCount += 1;
-              return t.get(subcountryRef);
-            })
-            .then((doc) => {
-              subcountryCount = doc.data() || subcountryCount;
-              subcountryCount += 1;
-              return t.get(countryRef);
-            })
-            .then((doc) => {
-              countryCount = doc.data() || countryCount;
-              countryCount += 1;
-              return t.get(geoRef);
-            })
-            .then((doc) => {
-              geoCount = doc.data() || geoCount;
-              geoCount += 1;
-            })
-            .then(() => {
-              t.update(cityRef, cityCount)
-                .update(subcountryRef, subcountryCount)
-                .update(countryRef, countryCount)
-                .update(geoRef, geoCount);
-            });
-        })
-          .then((res) => {
-            console.log('Transaction success', res);
-          })
-          .catch((err) => {
-            console.log('Transaction failure:', err);
-          });
-      });
+    const b64 = Buffer.from(`${blk.geo.latitude}|${blk.geo.longitude}`).toString('base64');
+
+    return event.data.ref.set(blk, { merge: true }).then(() => dataRef.child(`geopoints/${b64}`).set({ geo, country, subcountry })).then(() => {
+      let countryRef;
+      let regionRef;
+      let cityRef;
+      let geoRef;
+      const promises = [];
+
+      if (blk.country) {
+        countryRef = dataRef.child('byCountry').child(blk.country.replace(/ /g, '_'));
+      }
+
+      if (blk.subcountry) {
+        regionRef = dataRef.child('byRegion').child(blk.subcountry.replace(/ /g, '_'));
+      }
+
+      if (blk.city) {
+        cityRef = dataRef.child('byCity').child(blk.city.replace(/ /g, '_'));
+      }
+
+      if (b64) {
+        geoRef = dataRef.child('byLatLng').child(b64);
+      }
+
+      if (countryRef) {
+        promises.push(countryRef.transaction((cntry) => {
+          let c = cntry || 0;
+          c += 1;
+          return c;
+        }));
+      }
+
+      if (regionRef) {
+        promises.push(regionRef.transaction((region) => {
+          let r = region || 0;
+          r += 1;
+          return r;
+        }));
+      }
+
+      if (cityRef) {
+        promises.push(cityRef.transaction((cty) => {
+          let c = cty || 0;
+          c += 1;
+          return c;
+        }));
+      }
+
+      if (geoRef) {
+        promises.push(geoRef.transaction((go) => {
+          let g = go || 0;
+          g += 1;
+          return g;
+        }));
+      }
+
+      return Promise.all(promises);
+    });
   });
 });

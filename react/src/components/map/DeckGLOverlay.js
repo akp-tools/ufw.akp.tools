@@ -19,7 +19,8 @@ export default class DeckGLOverlay extends Component {
       data,
       getSourceColor: d => getSourceColor(d, false),
       getTargetColor: d => getSourceColor(d, true),
-      getSourcePosition: d => (d.geo ? [d.geo.longitude, d.geo.latitude] : [0, 0]),
+      // eslint-disable-next-line no-underscore-dangle
+      getSourcePosition: d => (d.geo ? [d.geo._longitude, d.geo._latitude] : [0, 0]),
       getTargetPosition: d => [-81.5427402, 35.922479],
       strokeWidth: 4,
     });

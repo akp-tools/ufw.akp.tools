@@ -4,6 +4,7 @@ require('firebase/firestore'); // firestore has side effects that need to occur.
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCBOVphw_2mJv4qcCpY-Q9KlzT0BphcNwA',
+  databaseURL: 'https://ufw-akp-tools.firebaseio.com',
   authDomain: 'ufw-akp-tools.firebaseapp.com',
   projectId: 'ufw-akp-tools',
 };
@@ -21,13 +22,11 @@ export const FirebaseActions = {
     (dispatch) => {
       dispatch({ type: FirebaseTypes.FIREBASE_INITIALIZE });
       firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-      db.collection('geopoints')
-        .onSnapshot((querySnapshot) => {
-          const blocks = [];
-          querySnapshot.forEach(doc => blocks.push(doc.data()));
-          dispatch(FirebaseActions.response(blocks));
-        });
+      const db = firebase.database().ref('data');
+      db.child('geopoints').on('value', (data) => {
+        const blocks = Object.values(data.val());
+        dispatch(FirebaseActions.response(blocks));
+      });
     }
   ),
   response: data => ({ type: FirebaseTypes.FIREBASE_RESPONSE, data }),
