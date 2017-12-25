@@ -90,18 +90,24 @@ exports.onNewUfwBlock = functions.firestore.document('/ufwBlocks/{id}').onCreate
       let regionRef;
       let cityRef;
       let geoRef;
+      let countryKey;
+      let regionKey;
+      let cityKey;
       const promises = [];
 
       if (blk.country) {
-        countryRef = dataRef.child('byCountry').child(blk.country.replace(/ /g, '_'));
+        countryKey = blk.country.replace(/\./g, '');
+        countryRef = dataRef.child('byCountry').child(countryKey);
       }
 
       if (blk.subcountry) {
-        regionRef = dataRef.child('byRegion').child(blk.subcountry.replace(/ /g, '_'));
+        regionKey = blk.subcountry.replace(/\./g, '');
+        regionRef = dataRef.child('byRegion').child(`${regionKey}, ${countryKey}`);
       }
 
       if (blk.city) {
-        cityRef = dataRef.child('byCity').child(blk.city.replace(/ /g, '_'));
+        cityKey = blk.city.replace(/\./g, '');
+        cityRef = dataRef.child('byCity').child(`${cityKey}, ${regionKey}, ${countryKey}`);
       }
 
       if (b64) {
