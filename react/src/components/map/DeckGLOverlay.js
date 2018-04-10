@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DeckGL, { ArcLayer } from 'deck.gl';
+import DeckGL, { ScatterplotLayer } from 'deck.gl';
 
 const c = require('tinycolor2');
-
 const crypto = require('crypto');
 
 export default class DeckGLOverlay extends Component {
@@ -14,15 +13,18 @@ export default class DeckGLOverlay extends Component {
       return null;
     }
 
-    const layer = new ArcLayer({
+    const layer = new ScatterplotLayer({
       id: 'grid',
       data,
-      getSourceColor: d => getSourceColor(d, false),
-      getTargetColor: d => getSourceColor(d, true),
       // eslint-disable-next-line no-underscore-dangle
-      getSourcePosition: d => (d.geo ? [d.geo._longitude, d.geo._latitude] : [0, 0]),
-      getTargetPosition: d => [-81.5427402, 35.922479],
-      strokeWidth: 4,
+      getPosition: d => (d.geo ? [d.geo._longitude, d.geo._latitude] : [0, 0]),
+      getColor,
+      getRadius: d => (Math.pow((1 / (viewport.zoom || 1.5)), 2) * 100),
+      radiusScale: 1000,
+      outline: false,
+      updateTriggers: {
+        getRadius: [viewport.zoom],
+      },
     });
 
     return <DeckGL {...viewport} layers={[layer]} />;
@@ -34,7 +36,7 @@ DeckGLOverlay.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const getSourceColor = (d, t) => {
+const getColor = (d) => {
   let str = `${d.country}`;
   if (str === 'United States') {
     str = `${d.subcountry}, ${str}`;
